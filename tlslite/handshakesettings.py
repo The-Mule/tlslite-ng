@@ -124,6 +124,14 @@ class HandshakeSettings(object):
 
     @type eccCurves: list
     @ivar eccCurves: List of named curves that are to be supported
+
+    @type useEncryptThenMAC: bool
+    @ivar useEncryptThenMAC: whether to support the encrypt then MAC extension
+    from RFC 7366. True by default.
+
+    @type useExtendedMasterSecret: bool
+    @ivar useExtendedMasterSecret: whether to support the extended master
+    secret calculation from RFC 7627. True by default.
     """
     def __init__(self):
         self.minKeySize = 1023
@@ -140,6 +148,7 @@ class HandshakeSettings(object):
         self.useEncryptThenMAC = True
         self.rsaSigHashes = list(RSA_SIGNATURE_HASHES)
         self.eccCurves = list(CURVE_NAMES)
+        self.useExtendedMasterSecret = True
 
     @staticmethod
     def _sanityCheckKeySizes(other):
@@ -192,6 +201,9 @@ class HandshakeSettings(object):
         if other.useEncryptThenMAC not in (True, False):
             raise ValueError("useEncryptThenMAC can only be True or False")
 
+        if other.useExtendedMasterSecret not in (True, False):
+            raise ValueError("useExtendedMasterSecret must be True or False")
+
         unknownSigHash = [val for val in other.rsaSigHashes \
                           if val not in ALL_RSA_SIGNATURE_HASHES]
         if unknownSigHash:
@@ -231,6 +243,7 @@ class HandshakeSettings(object):
         other.useEncryptThenMAC = self.useEncryptThenMAC
         other.rsaSigHashes = self.rsaSigHashes
         other.eccCurves = self.eccCurves
+        other.useExtendedMasterSecret = self.useExtendedMasterSecret
 
         if not cipherfactory.tripleDESPresent:
             other.cipherNames = [i for i in self.cipherNames if i != "3des"]
