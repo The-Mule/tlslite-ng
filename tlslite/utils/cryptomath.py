@@ -27,7 +27,11 @@ try:
     from M2Crypto import m2
     m2cryptoLoaded = True
 
-except ImportError:
+    with open('/proc/sys/crypto/fips_enabled') as fipsFile:
+        if '1' in fipsFile.read().decode('ascii'):
+            m2cryptoLoaded = False
+
+except (ImportError, IOError, OSError):
     m2cryptoLoaded = False
 
 #Try to load GMPY
@@ -67,7 +71,7 @@ prngName = "os.urandom"
 # **************************************************************************
 
 import hmac
-import hashlib
+import tlslite.utils.tlshashlib as hashlib
 
 def MD5(b):
     """Return a MD5 digest of data"""

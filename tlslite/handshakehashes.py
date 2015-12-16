@@ -5,7 +5,7 @@
 
 from .utils.compat import compat26Str, compatHMAC
 from .utils.cryptomath import MD5, SHA1
-import hashlib
+import tlslite.utils.tlshashlib as hashlib
 
 class HandshakeHashes(object):
 
